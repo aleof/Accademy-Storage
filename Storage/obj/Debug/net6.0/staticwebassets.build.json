@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "Hash": "egwq1KjfCp33qphbq6epQaKC4c7IrkNWXSpXuXbsafk=",
+  "Source": "login",
+  "BasePath": "_content/login",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "login\\wwwroot",
+      "Source": "login",
+      "ContentRoot": "C:\\Users\\aleof\\source\\repos\\project\\login\\wwwroot\\",
+      "BasePath": "_content/login",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\aleof\\source\\repos\\project\\login\\wwwroot\\index.html",
+      "SourceId": "login",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\aleof\\source\\repos\\project\\login\\wwwroot\\",
+      "BasePath": "_content/login",
+      "RelativePath": "index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
+    }
+  ]
+}
