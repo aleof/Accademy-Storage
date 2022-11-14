@@ -13,10 +13,12 @@ namespace Controllers
     {
         private readonly IOptions<MongoSettings> _mydbset;
         private MD5 md5sum = MD5.Create();
+        private string psk = "psk";
         public StorageController(IOptions<MongoSettings> dbSetup)
         {
             _mydbset = dbSetup;
         }
+
 
         [HttpGet("PopolaDB", Name = "PopolaDB")]
         public IEnumerable<Questionario> PopolaDB()
@@ -61,6 +63,8 @@ namespace Controllers
     [HttpGet("Get", Name = "GetQuestionari")]
     public IEnumerable<Questionario> Get()
     {
+       if (Request.Headers["_token"] != psk)
+                return null;
         MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(
                 _mydbset.Value.ConnectionString
@@ -83,7 +87,10 @@ namespace Controllers
     [ProducesResponseType(404)] 
     [ProducesResponseType(400)] 
     public IActionResult GetQuestionarioById(string id) {
-        MongoClientSettings settings = 
+            if (Request.Headers["_token"] != psk)
+                return BadRequest($"Invalid token:{Request.Headers["_token"]}" );
+
+            MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(
                 _mydbset.Value.ConnectionString
             );
@@ -109,7 +116,9 @@ namespace Controllers
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]   
     public IActionResult PutQuestionario([FromBody] Questionario q) {
-        MongoClientSettings settings = 
+            if (Request.Headers["_token"] != psk)
+                return BadRequest($"Invalid token:{Request.Headers["_token"]}");
+            MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(
                 _mydbset.Value.ConnectionString
             );
@@ -131,7 +140,9 @@ namespace Controllers
     [ProducesResponseType(404)] 
     [ProducesResponseType(400)] 
     public IActionResult Delete(string id) {
-         MongoClientSettings settings = 
+            if (Request.Headers["_token"] != psk)
+                return BadRequest($"Invalid token:{Request.Headers["_token"]}");
+            MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(
                 _mydbset.Value.ConnectionString
             );
@@ -162,7 +173,9 @@ namespace Controllers
     [ProducesResponseType(204)]
 
     public IActionResult UpdateLogEntry(string id,[FromBody] Questionario q) {
-        MongoClientSettings settings = 
+            if (Request.Headers["_token"] != psk)
+                return BadRequest($"Invalid token:{Request.Headers["_token"]}");
+            MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(
                 _mydbset.Value.ConnectionString
             );

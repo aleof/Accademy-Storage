@@ -1,27 +1,27 @@
 {
   "Version": 1,
-  "Hash": "egwq1KjfCp33qphbq6epQaKC4c7IrkNWXSpXuXbsafk=",
-  "Source": "login",
-  "BasePath": "_content/login",
+  "Hash": "G3QjuetMICWMnkbCRhcaVKHypYmr78XTbw/Q2YvzkVM=",
+  "Source": "storage",
+  "BasePath": "_content/storage",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [
     {
-      "Name": "login\\wwwroot",
-      "Source": "login",
-      "ContentRoot": "C:\\Users\\aleof\\source\\repos\\project\\login\\wwwroot\\",
-      "BasePath": "_content/login",
+      "Name": "storage\\wwwroot",
+      "Source": "storage",
+      "ContentRoot": "C:\\Users\\boh_h\\Desktop\\Accademy-Storage\\Storage\\wwwroot\\",
+      "BasePath": "_content/storage",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\aleof\\source\\repos\\project\\login\\wwwroot\\index.html",
-      "SourceId": "login",
+      "Identity": "C:\\Users\\boh_h\\Desktop\\Accademy-Storage\\Storage\\wwwroot\\index.html",
+      "SourceId": "storage",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\aleof\\source\\repos\\project\\login\\wwwroot\\",
-      "BasePath": "_content/login",
+      "ContentRoot": "C:\\Users\\boh_h\\Desktop\\Accademy-Storage\\Storage\\wwwroot\\",
+      "BasePath": "_content/storage",
       "RelativePath": "index.html",
       "AssetKind": "All",
       "AssetMode": "All",
