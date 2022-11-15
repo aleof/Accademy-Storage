@@ -9,6 +9,8 @@ using System.Text;
 
 namespace Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class StorageController : ControllerBase
     {
         private readonly IOptions<MongoSettings> _mydbset;
@@ -18,6 +20,7 @@ namespace Controllers
         {
             _mydbset = dbSetup;
         }
+
 
 
         [HttpGet("PopolaDB", Name = "PopolaDB")]
@@ -42,6 +45,7 @@ namespace Controllers
                 {
                     Questionario tmp = new Questionario()
                     {
+                        UserName = $"UserID{i}",
                         FirstName = $"Nome{i}",
                         LastName = $"Cognome{i}"   
                     };
@@ -61,10 +65,10 @@ namespace Controllers
         }
 
     [HttpGet("Get", Name = "GetQuestionari")]
-    public IEnumerable<Questionario> Get()
+    public IActionResult Get()
     {
-       if (Request.Headers["_token"] != psk)
-                return null;
+       //if (Request.Headers["_token"] != psk)
+       //     return null;
         MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(
                 _mydbset.Value.ConnectionString
@@ -79,14 +83,14 @@ namespace Controllers
 
         var lsl = cls.Find(_ => true).ToList();
 
-        return lsl;
+        return Ok(lsl);
     }
 
-    [HttpGet("{id}",Name=nameof(GetQuestionarioById) )]
+    [HttpGet("{QuestionarioID}",Name=nameof(GetQuestionarioById) )]
     [ProducesResponseType(200,Type=typeof(Questionario))]
     [ProducesResponseType(404)] 
     [ProducesResponseType(400)] 
-    public IActionResult GetQuestionarioById(string id) {
+    public IActionResult GetQuestionarioById(string QuestionarioID) {
             if (Request.Headers["_token"] != psk)
                 return BadRequest($"Invalid token:{Request.Headers["_token"]}" );
 
@@ -103,16 +107,50 @@ namespace Controllers
         var cls = db.GetCollection<Questionario>(_mydbset.Value.CollectionName);
 
         try {
-            var questionario= cls.Find(x=>x.id==id).FirstOrDefault();
-            if(questionario==null)  return NotFound($"{id} not found!");       //404 todo: move to async! 
+            var questionario= cls.Find(x=>x.id==QuestionarioID).FirstOrDefault();
+            if(questionario==null)  return NotFound($"{QuestionarioID} not found!");       //404 todo: move to async! 
             return Ok(questionario);                         //200 
         } catch {
-            return BadRequest($"{id} invalid");                    //400 
+            return BadRequest($"{QuestionarioID} invalid");                    //400 
         }
         
     }
 
-    [HttpPut("Put")]
+        [HttpGet("User/{UserName}", Name = nameof(GetQuestionariByUserName))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Questionario>))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        public IActionResult GetQuestionariByUserName(string UserName)
+        {
+            //if (Request.Headers["_token"] != psk)
+            //    return BadRequest($"Invalid token:{Request.Headers["_token"]}");
+
+            MongoClientSettings settings =
+            MongoClientSettings.FromConnectionString(
+                _mydbset.Value.ConnectionString
+            );
+
+            settings.LinqProvider = LinqProvider.V3;
+            MongoClient client = new MongoClient(settings);
+
+            var db = client.GetDatabase(_mydbset.Value.DataBaseName);
+
+            var cls = db.GetCollection<Questionario>(_mydbset.Value.CollectionName);
+
+            try
+            {
+                var questionario = cls.Find(x => x.UserName == UserName).ToList();
+                if (questionario == null) return NotFound($"{UserName} not found!");       //404 todo: move to async! 
+                return Ok(questionario);                         //200 
+            }
+            catch
+            {
+                return BadRequest($"{UserName} invalid");                    //400 
+            }
+
+        }
+
+        [HttpPut("Put")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]   
     public IActionResult PutQuestionario([FromBody] Questionario q) {
@@ -135,11 +173,11 @@ namespace Controllers
         return Ok();
     }
 
-    [HttpDelete("delete/{id}",Name="Delete")]
+    [HttpDelete("delete/{QuestionarioID}",Name="Delete")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)] 
     [ProducesResponseType(400)] 
-    public IActionResult Delete(string id) {
+    public IActionResult Delete(string QuestionarioID) {
             if (Request.Headers["_token"] != psk)
                 return BadRequest($"Invalid token:{Request.Headers["_token"]}");
             MongoClientSettings settings = 
@@ -157,9 +195,9 @@ namespace Controllers
         //Do the job
         try {
             //Check Exists
-            if( cls.Find(x=>x.id==id).CountDocuments()<1 )  return NotFound();
+            if( cls.Find(x=>x.id== QuestionarioID).CountDocuments()<1 )  return NotFound();
             //Delete
-            cls.DeleteOne(x=>x.id==id);
+            cls.DeleteOne(x=>x.id==QuestionarioID);
             //200: OK 
             return Ok();
         }catch(Exception ops){
@@ -168,11 +206,11 @@ namespace Controllers
 
     }
 
-    [HttpPost("{id}")]
+    [HttpPost("{QuestionarioID}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
 
-    public IActionResult UpdateLogEntry(string id,[FromBody] Questionario q) {
+    public IActionResult UpdateQuestionario(string QuestionarioID,[FromBody] Questionario q) {
             if (Request.Headers["_token"] != psk)
                 return BadRequest($"Invalid token:{Request.Headers["_token"]}");
             MongoClientSettings settings = 
@@ -188,13 +226,9 @@ namespace Controllers
         var cls = db.GetCollection<Questionario>(_mydbset.Value.CollectionName);
 
         try {
-            //cls.Find(_=>true).Skip().Limit();
-            var buco = cls.Find(x=>x.id==id).SingleOrDefault();
-            if (buco==null) return NotFound();
-            //var filter = Builders<BsonDocument>.Filter.Eq("_id", id);
-            //cls.DeleteOne(x=>x.id==id);
-            //cls.InsertOne(log);
-            cls.ReplaceOne(x=>x.id==id,q);
+            var quest = cls.Find(x=>x.id==QuestionarioID).SingleOrDefault();
+            if (quest == null) return NotFound();
+            cls.ReplaceOne(x=>x.id==QuestionarioID,q);
             return Ok(q);
         } catch(Exception ops){
             return BadRequest(ops.Message);

@@ -12,6 +12,7 @@ namespace Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? id { get; set; }
+        public string UserName { get; set; }
         public string FirstName {get;set;}
         public string LastName {get;set;}
         public Dictionary<string,string> Risposte {get;set;}
