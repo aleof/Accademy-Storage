@@ -65,11 +65,11 @@ namespace Controllers
         }
 
     [HttpGet("Get", Name = "GetQuestionari")]
-    public IActionResult Get()
+    public IActionResult Get([FromHeader(Name = "_token")] string token)
     {
-       //if (Request.Headers["_token"] != psk)
-       //     return null;
-        MongoClientSettings settings = 
+       if (Request.Headers["_token"] != psk)
+                return null;
+            MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(
                 _mydbset.Value.ConnectionString
             );
