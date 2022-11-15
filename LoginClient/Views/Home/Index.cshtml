@@ -1,0 +1,67 @@
+﻿@model IEnumerable<LoginClient.Models.User>
+@{
+    ViewData["Title"] = "Users";
+}
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th,
+    td {
+        text-align: left;
+        padding: 10px;
+    }
+
+    tbody > tr:nth-child(even) {
+        background-color: white;
+    }
+
+    tbody > tr:nth-child(odd) {
+        background-color: navajowhite;
+    }
+
+    thead > tr {
+        font-weight: bold;
+    }
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">Log Entries</h1>
+</div>
+<table id="logs width="100%"">
+    <thead >
+        <tr>
+            <td>ID</td>
+            <td>Username</td>
+            <td>Password</td>
+            <td>First Name</td>
+            <td>Last Name</td>
+            <td>Email</td>
+            <td>Admin</td>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model != null){
+            @foreach(var item in Model){
+                <tr>
+                    <td>@item.id</td>
+                    <td>@item.username</td>
+                    <td>@item.password</td>
+                    <td>@item.firstName</td>
+                    <td>@item.lastName</td>
+                    <td>@item.email</td>
+                    <td>@item.isAdmin</td>
+            <td><a class="btn btn-warning" href="@Url.Action("Edit", new { Id = item.id, Flag = 0})">Modify</a></td>
+            <td><a class="btn btn-danger" href="@Url.Action("Delete", new { Id = item.id})">Delete</a></td>
+                    <td><a class="btn btn-warning" href="@Url.Action("Login", new { username = item.username, password = item.password})">Login</a></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<br />
+<a class="btn btn-success" href="@Url.Action("Edit", new { Id = "", Flag = 1})">Add new</a>
+

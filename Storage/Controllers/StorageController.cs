@@ -14,11 +14,13 @@ namespace Controllers
     public class StorageController : ControllerBase
     {
         private readonly IOptions<MongoSettings> _mydbset;
+        private readonly IOptions<TokenSettings> _tokensettings;
         private MD5 md5sum = MD5.Create();
         private string psk = "psk";
-        public StorageController(IOptions<MongoSettings> dbSetup)
+        public StorageController(IOptions<MongoSettings> dbSetup, IOptions<TokenSettings> tokensettings)
         {
             _mydbset = dbSetup;
+            _tokensettings = tokensettings;
         }
 
 
@@ -67,8 +69,8 @@ namespace Controllers
     [HttpGet("Get", Name = "GetQuestionari")]
     public IActionResult Get([FromHeader(Name = "_token")] string token)
     {
-       if (Request.Headers["_token"] != psk)
-                return null;
+       if (Request.Headers["_token"] != _tokensettings.Value.UserToken)
+                return BadRequest($"Invalid token:{Request.Headers["_token"]}");
             MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(
                 _mydbset.Value.ConnectionString
@@ -90,8 +92,8 @@ namespace Controllers
     [ProducesResponseType(200,Type=typeof(Questionario))]
     [ProducesResponseType(404)] 
     [ProducesResponseType(400)] 
-    public IActionResult GetQuestionarioById(string QuestionarioID) {
-            if (Request.Headers["_token"] != psk)
+    public IActionResult GetQuestionarioById([FromHeader(Name = "_token")] string token, string QuestionarioID) {
+            if (Request.Headers["_token"] != _tokensettings.Value.UserToken)
                 return BadRequest($"Invalid token:{Request.Headers["_token"]}" );
 
             MongoClientSettings settings = 
@@ -120,10 +122,10 @@ namespace Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Questionario>))]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
-        public IActionResult GetQuestionariByUserName(string UserName)
+        public IActionResult GetQuestionariByUserName([FromHeader(Name = "_token")] string token, string UserName)
         {
-            //if (Request.Headers["_token"] != psk)
-            //    return BadRequest($"Invalid token:{Request.Headers["_token"]}");
+            if (Request.Headers["_token"] != _tokensettings.Value.UserToken)
+                return BadRequest($"Invalid token:{Request.Headers["_token"]}");
 
             MongoClientSettings settings =
             MongoClientSettings.FromConnectionString(
@@ -153,8 +155,8 @@ namespace Controllers
         [HttpPut("Put")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]   
-    public IActionResult PutQuestionario([FromBody] Questionario q) {
-            if (Request.Headers["_token"] != psk)
+    public IActionResult PutQuestionario([FromHeader(Name = "_token")] string token, [FromBody] Questionario q) {
+            if (Request.Headers["_token"] != _tokensettings.Value.AdminToken)
                 return BadRequest($"Invalid token:{Request.Headers["_token"]}");
             MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(
@@ -177,8 +179,8 @@ namespace Controllers
     [ProducesResponseType(200)]
     [ProducesResponseType(404)] 
     [ProducesResponseType(400)] 
-    public IActionResult Delete(string QuestionarioID) {
-            if (Request.Headers["_token"] != psk)
+    public IActionResult Delete([FromHeader(Name = "_token")] string token, string QuestionarioID) {
+            if (Request.Headers["_token"] != _tokensettings.Value.AdminToken)
                 return BadRequest($"Invalid token:{Request.Headers["_token"]}");
             MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(
@@ -210,8 +212,8 @@ namespace Controllers
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
 
-    public IActionResult UpdateQuestionario(string QuestionarioID,[FromBody] Questionario q) {
-            if (Request.Headers["_token"] != psk)
+    public IActionResult UpdateQuestionario([FromHeader(Name = "_token")] string token, string QuestionarioID,[FromBody] Questionario q) {
+            if (Request.Headers["_token"] != _tokensettings.Value.AdminToken)
                 return BadRequest($"Invalid token:{Request.Headers["_token"]}");
             MongoClientSettings settings = 
             MongoClientSettings.FromConnectionString(

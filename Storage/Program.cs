@@ -4,7 +4,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.Configure<Models.MongoSettings>(
-    builder.Configuration.GetSection("MongoDatabase")               
+    builder.Configuration.GetSection("MongoDatabase")
+);
+
+builder.Services.Configure<Models.TokenSettings>(
+    builder.Configuration.GetSection("Tokens")
 );
 
 builder.Services.AddControllers();

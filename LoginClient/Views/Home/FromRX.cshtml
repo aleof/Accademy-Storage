@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Log>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<table width="100%" ">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>Data</td>
+            <td>RX</td>
+            <td>TX</td>
+            <td>Status</td>
+            <td>Progressivo Sessione</td>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model != null){
+        @foreach(var item in Model){
+        <tr>
+            <td>@Html.ActionLink(@item.id, "Details", new { Id = item.id})</td>
+            <td>@item.Data</td>
+            <td>@Html.ActionLink(@item.NominativoRX, "FromRx", new { Rx = item.NominativoRX})</td>
+            <td>@item.NominativoTX</td>
+            <td>@item.Status</td>
+            <td>@item.ProgressivoSessione</td>
+        </tr>
+        }
+        }
+    </tbody>
+</table>
